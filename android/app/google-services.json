@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "260989783896",
+    "firebase_url": "https://oi-app-2af0a-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "oi-app-2af0a",
+    "storage_bucket": "oi-app-2af0a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:260989783896:android:5d4c3596565c02d2c35f2d",
+        "android_client_info": {
+          "package_name": "com.oiapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "260989783896-02ui2lrjpakq6f6tob4kavbpqg82s340.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.oiapp",
+            "certificate_hash": "6a096383a5d27abab7fda2e593bc33a4298ea36a"
+          }
+        },
+        {
+          "client_id": "260989783896-p2iuo72p4gcmuncgouaekffctdivq612.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDsjeC4no2U1NRz6n73qoyOdRAwrHc5HbA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "260989783896-p2iuo72p4gcmuncgouaekffctdivq612.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
