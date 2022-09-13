@@ -163,7 +163,8 @@ const styles = StyleSheet.create({
     height: 40,
     paddingLeft:10,
     fontSize:17,
-    width:windowWidth-100
+    width:windowWidth-100,
+    // backgroundColor:'red'
     // fontFamily:'Poppins-Regular',
   },
   drawerTopView: {

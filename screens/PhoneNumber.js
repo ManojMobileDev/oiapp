@@ -59,7 +59,7 @@ export default function PhoneNumber() {
         console.log(val);
         setOtp(val)
 
-        fetch('https://boxesfree.shop/send_sms_by_otp.php', {
+        fetch('https://bxladmin.monthekristho.com/pages/send_sms_by_otp.php', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -214,7 +214,7 @@ export default function PhoneNumber() {
                         value={number}
                         placeholder="00 000 0000"
                         keyboardType="numeric"
-                        
+                        textAlignVertical='center'
                        
                     />
 
