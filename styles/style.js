@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
   title: {
     color: "#20232a",
     textAlign: "center",
-    fontSize: 27,
+    fontSize: windowWidth/16,
     fontFamily:'Poppins-Medium',
     // width:windowWidth-100,
   },
@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
   },
   row:{
     flexDirection:'row',
-    alignItems:'flex-start',
+    alignItems:'center',
     justifyContent:'space-between',
     // width:windowWidth-50
   },

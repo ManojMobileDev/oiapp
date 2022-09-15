@@ -12,13 +12,13 @@ import MaterialIcons from 'react-native-vector-icons/dist/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/dist/MaterialCommunityIcons';
 import Feather from 'react-native-vector-icons/dist/Feather';
 
-import MapView, { PROVIDER_GOOGLE ,Marker }  from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE ,Marker,AnimatedRegion }  from 'react-native-maps';
 import { useNavigation } from '@react-navigation/native';
 import RBSheet from "react-native-raw-bottom-sheet";
 import i18n from 'i18n-js';
 import firestore from '@react-native-firebase/firestore';
-import Geolocation from 'react-native-geolocation-service';
-
+// import Geolocation from 'react-native-geolocation-service';
+import Geolocation from '@react-native-community/geolocation';
 import {  PermissionsAndroid } from 'react-native';
 
 const windowWidth = Dimensions.get('window').width;
@@ -30,6 +30,7 @@ export default function Home() {
     
     const [bg, setBg] = useState('green');
     const [coords, setCoods] = useState(null); 
+    const [marker, setMarker] = useState('');
 
     const navigation = useNavigation();
 
@@ -50,6 +51,33 @@ export default function Home() {
         })
     }
 
+    const vehicleCollection = firestore().collection('vehicles');
+
+    const getVehicle =()=>{
+        firestore()
+        .collection('vehicleDetails')
+        .doc(context.mobile)
+        .get()
+        .then(documentSnapshot => {
+        
+            if (documentSnapshot.exists) {
+                var data = documentSnapshot.data()
+                firestore()
+                .collection('vehicles')
+                .doc(data.vehicle)
+                .get()
+                .then(documentSnapshot => {
+                
+                    if (documentSnapshot.exists) {
+                        var data2 = documentSnapshot.data()
+                        // console.log(data2)
+                        setMarker(data2.imgdark)
+                    }
+                  });
+                
+            }
+          });
+    }
 
     async function requestPermissions() {
         if (Platform.OS === 'ios') {
@@ -68,25 +96,57 @@ export default function Home() {
         }
       }
 
-      const getLocation=()=>{
+    //   const getLocation=()=>{
+    //     Geolocation.getCurrentPosition(
+    //         (position) => {
+    //           console.log(position);
+    //           setCoods(position.coords)
+    //         },
+    //         (error) => {
+    //           // See error code charts below.
+    //           console.log(error.code, error.message);
+    //         },
+    //         { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+    //     );
+    //   }
+
+    const getCurrent =()=>{
+        // navigator.geolocation.watchPosition(
+        //     position => {
+        //      console.log(position);
+        //     }, 
+        //     error => console.log(error),
+        //     { 
+        //       enableHighAccuracy: true,
+        //       timeout: 20000,
+        //       maximumAge: 1000,
+        //       distanceFilter: 10
+        //     }
+        //    );
+
+        //    navigator.geolocation.getCurrentPosition(
+        //     position => {
+        //       console.log(position);
+
+        //     })
+        console.log(navigator)
+    }
+      const getLocation = () => {
         Geolocation.getCurrentPosition(
-            (position) => {
-              console.log(position);
-              setCoods(position.coords)
-            },
-            (error) => {
-              // See error code charts below.
-              console.log(error.code, error.message);
-            },
-            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+          (pos) => {
+            setCoods(pos.coords);
+          },
+          (error) => Alert.alert('GetCurrentPosition Error', JSON.stringify(error)),
+          { enableHighAccuracy: true }
         );
-      }
+      };
 
     useEffect(() => {
-
         requestPermissions()
+        getVehicle()
+        getCurrent()
+    },[]);
 
-      },[]);
   return (
     <View style={[styles.container,{padding:0}]}>
         <StatusBar
@@ -107,17 +167,32 @@ export default function Home() {
                     longitude: coords.longitude,
                     latitudeDelta: 0.015,
                     longitudeDelta: 0.0121,
+                    coordinate: new AnimatedRegion({
+                        latitude: coords.latitude,
+                        longitude: coords.longitude,
+                        latitudeDelta: 0,
+                        longitudeDelta: 0
+                      })
                 }}
                 mapType='standard'
+                showUserLocation
+                followUserLocation
+                loadingEnabled
                 >
-                        <Marker
+                    {/* {marker==''?
+                    null
+                    : */}
+                        <Marker.Animated
                             key={1}
                             coordinate={{ latitude : coords.latitude , longitude : coords.longitude }}
                             title={'Me'}
                             onPress={(click)=>{console.log('click')}}
                             hideCallout
+                            // image={{uri:marker}}
                             // description={'rest esc'}
-                        />
+                        />                    
+                    {/* } */}
+
 
                 </MapView>               
             }
@@ -222,7 +297,8 @@ export default function Home() {
                             :
                             <Text style={[styles.buttonText,{paddingHorizontal:10}]}>{i18n.t('home.offline')}</Text>
                         }
-
+                        {/* <Text>{coords.latitude}</Text> */}
+                        {/* <Text>{JSON.stringify(coords)}</Text> */}
                     </View>
                 </TouchableOpacity>
 
@@ -240,8 +316,9 @@ export default function Home() {
                     </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={[styles.menu,{padding:7,borderRadius:0}]} onPress={()=>{}}>
+                <TouchableOpacity style={[styles.menu,{padding:7,borderRadius:0}]} onPress={()=>{getLocation()}}>
                     <Image source={require('../assets/images/direction.png')} style={{width:23,height:23}} />
+
                 </TouchableOpacity>
                 
             </View>

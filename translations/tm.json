@@ -209,5 +209,11 @@
     "64":"டிரைவர் உதவி",
     "65":"பணம் செலுத்தும் இடம்",
     "7":"  வெளியேறு"
+  },
+  "ref": {
+    "title": "Referrel",
+    "placeholder":"Enter a Referrel Code",
+    "next":"Next",
+    "skip":"SKIP"
   }
 }

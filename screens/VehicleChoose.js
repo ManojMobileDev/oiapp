@@ -10,20 +10,44 @@ import { useNavigation } from '@react-navigation/native';
 import { Question1 } from '../datasets/Question1';
 import LinearGradient from 'react-native-linear-gradient';
 import { updateVehicle } from '../api/register';
+import firestore from '@react-native-firebase/firestore';
 
-export default function VehicalReg1() {
+export default function VehicalChoose() {
 
     const context = useContext(OIContext)
-    const [answer, setAnswer] = useState(1);
+    const [answer, setAnswer] = useState();
     const navigation = useNavigation();
+    const [vehicles, setVehicles] = useState(null);
+    const [choice, setChoice] = useState('');
     
     const save = ()=>{
-      let vehicle = answer==1?'tuk':answer==2?'nano/car/mini':answer==3?'minivan/van':answer==4?'bike':'truck'
-      let data ={vehicle: vehicle}
+      // let vehicle = answer==1?'tuk':answer==2?'nano/car/mini':answer==3?'minivan/van':answer==4?'bike':'truck'
+      let data ={vehicle: choice}
       updateVehicle(data,context.mobile)
       navigation.navigate('DrivingLicense')
+      console.log(choice)
+    }
+    const vehicleCollection = firestore().collection('vehicles');
+
+    const getVehicles = () => {
+      var arr=[]
+      vehicleCollection
+      .get()
+      .then(querySnapshot => {
+        console.log('Total users: ', querySnapshot.size);
+
+        querySnapshot.forEach(documentSnapshot => {
+          console.log('User ID: ', documentSnapshot.id, documentSnapshot.data());
+          arr.push(documentSnapshot.data())
+        });
+        setVehicles(arr)
+      });
     }
 
+    useEffect(() => {
+      getVehicles()
+    }, [])
+    
   return (
     <View style={styles.container}>
         <StatusBar
@@ -38,7 +62,28 @@ export default function VehicalReg1() {
         <View style={styles.questionView}>
           <Text style={styles.question}>{i18n.t('choose.question')}</Text>
 
-                <TouchableOpacity onPress={()=>setAnswer(1)} style={styles.answerView}>
+                {
+                  vehicles==null?
+                  null:
+                  vehicles.map((vehicle,index)=>
+                  <TouchableOpacity key={index} onPress={()=>{setAnswer(index);setChoice(vehicle.vehicleId)}} style={styles.answerView}>
+                    <LinearGradient start={{x: 0, y: 1}} end={{x: 1, y: 0}} colors={answer==index?['#ED9939', '#FFCE31']:['rgba(255, 206, 49, 0.09)', 'rgba(255, 206, 49, 0.09)']} style={styles.linearGradiant}>
+                        <View style={[styles.row,{width:'100%'}]}>
+                          <Image source={{uri:vehicle.imgdark}} style={{width:50,height:50,resizeMode:'contain'}} />
+                          
+                          <View style={[styles.row,{width:'80%'}]}>
+                            <Text style={[styles.question,{color:answer==index?'white':'black'}]}>{vehicle.type}</Text> 
+                            <Octicons name='check-circle-fill' size={20} color={answer==index?'white':'#E8E8E8'}/> 
+                          </View>
+
+                        </View>
+                        
+                        {/* <Text style={[styles.subtitle,{color:answer==index?'white':'black',textAlign:'left',paddingHorizontal:0}]}>{vehicle.type}</Text> */}
+                    </LinearGradient>
+                </TouchableOpacity>
+                  )
+                }
+                {/* <TouchableOpacity onPress={()=>setAnswer(1)} style={styles.answerView}>
                     <LinearGradient start={{x: 0, y: 1}} end={{x: 1, y: 0}} colors={answer==1?['#ED9939', '#FFCE31']:['rgba(255, 206, 49, 0.09)', 'rgba(255, 206, 49, 0.09)']} style={styles.linearGradiant}>
                         <View style={styles.row}>
                           <Text style={[styles.question,{color:answer==1?'white':'black'}]}>{i18n.t('choose.topic1')}</Text> 
@@ -91,7 +136,7 @@ export default function VehicalReg1() {
                         
                         <Text style={[styles.subtitle,{color:answer==5?'white':'black',textAlign:'left',paddingHorizontal:0}]}>{i18n.t('choose.51')}</Text>
                     </LinearGradient>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
 
         </View>
         

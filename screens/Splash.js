@@ -37,29 +37,11 @@ export default function Splash() {
         }
     }
 
-    const getData = async () => {
+    const getData =  () => {
         
-        try {
-        const jsonValue = await AsyncStorage.getItem('user')
-        return jsonValue != null ? 
-        [
-            // console.log(JSON.parse(jsonValue)),
-        navigation.navigate('Home'),
-        context.setUser(JSON.parse(jsonValue))
-        // SplashScreen.hide()
-        ]
-        : 
-        [console.log('no data'),
-        navigation.navigate('LanguageSelect'),
-        ]
-        ;
-        } 
-        catch(e) {
-        // error reading value
-        }
-        finally{
-            SplashScreen.hide()
-        }
+        // context.getData(navigation)
+        context.getUser(navigation)
+        SplashScreen.hide()
     }
 
     React.useEffect(() => {

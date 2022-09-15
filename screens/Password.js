@@ -91,7 +91,7 @@ export default function Password() {
                     .then(() => {
                         console.log('User updated!');
                         setMatch(false)
-                        navigation.navigate('VehicalReg1')
+                        navigation.navigate('Refferel')
                     });
             }
             else{

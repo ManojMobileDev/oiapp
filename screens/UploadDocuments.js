@@ -243,47 +243,53 @@ export default function UploadDocuments() {
       const filename = name+filetype;
       const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
       
-      if(doc==1){
-        if(no==1){
-          setUploading1(true)
-          setDone1(true)
-          data.push({nicFront:filename})
-        } 
-        else{
 
-          data.push({nicBack:filename})
-        }       
-      }
-      else if(doc==2){
-        if(no==1){
-          setUploading2(true)
-          setDone2(true)
-          data.push({drivingLicenseSide1:filename})
-        } 
-        else{
-
-          data.push({drivingLicenseSide2:filename})
-        }       
-      }
-      else if(doc==3){
-        setDone3(true)
-          setUploading3(true)
-
-          data.push({billingProof:filename})    
-      }
-      else if(doc==4){
-        setDone4(true)
-          setUploading4(true)
-
-          data.push({profilePic:filename})
-      }
       console.log(filetype)
       
-      
+      const reference = storage().ref(filename);
+
       setTransferred(0);
       const task = storage()
         .ref(filename)
         .putFile(uploadUri);
+
+        const url = await reference.getDownloadURL();
+
+        console.log(url)
+        if(doc==1){
+          if(no==1){
+            setUploading1(true)
+            setDone1(true)
+            data.push({nicFront:url})
+          } 
+          else{
+  
+            data.push({nicBack:url})
+          }       
+        }
+        else if(doc==2){
+          if(no==1){
+            setUploading2(true)
+            setDone2(true)
+            data.push({drivingLicenseSide1:url})
+          } 
+          else{
+  
+            data.push({drivingLicenseSide2:url})
+          }       
+        }
+        else if(doc==3){
+          setDone3(true)
+            setUploading3(true)
+  
+            data.push({billingProof:url})    
+        }
+        else if(doc==4){
+          setDone4(true)
+            setUploading4(true)
+  
+            data.push({profilePic:url})
+        }
       // set progress state
       task.on('state_changed', snapshot => {
         setTransferred(

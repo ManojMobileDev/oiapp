@@ -87,9 +87,10 @@ export default function SignIn() {
         if (pass==data.password){
             message(i18n.t('response.success'),i18n.t('response.loginsuccess'),2)
             context.getLanguage()
-            setTimeout(function(){navigation.navigate('Home');setModalVisible(false)}, 2000)
             storeUserData(data)
             context.setUser(data)
+            setTimeout(function(){navigation.navigate('Home');setModalVisible(false)}, 2000)
+
         }
         else{
             setPassword()

@@ -209,5 +209,11 @@
     "64":"Driver assistance",
     "65":"Place of payment",
     "7":"  Logout"
+  },
+  "ref": {
+    "title": "Referrel",
+    "placeholder":"Enter a Referrel Code",
+    "next":"Next",
+    "skip":"SKIP"
   }
 }

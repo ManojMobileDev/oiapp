@@ -22,13 +22,18 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import SplashScreen from 'react-native-splash-screen'
 import { OIContext } from '../context/Context';
 import Splash from '../screens/Splash';
+import Refferel from '../screens/Refferel';
 
 
 const Stack = createStackNavigator();
 
+
 function MyStack() {
+  const [user, setUser] = useState();
+
   return (
-    <Stack.Navigator initialRouteName='Splash' 
+    <Stack.Navigator
+    
     screenOptions={({ route, navigation }) => ({
       headerShown: false,
       gestureEnabled: true,
@@ -52,12 +57,14 @@ function MyStack() {
       <Stack.Screen name="ResetPassword" component={ResetPassword} />
       <Stack.Screen name="SignUpPhoneNumber" component={SignUpPhoneNumber} />
       <Stack.Screen name="ResetPasswordPhoneNumber" component={ResetPasswordPhoneNumber} />
+      <Stack.Screen name="Refferel" component={Refferel} />
     </Stack.Navigator>
   );
 }
 function MyStack2() {
   return (
-    <Stack.Navigator initialRouteName='LanguageSelect' 
+    <Stack.Navigator
+    initialRouteName='LanguageSelect' 
     screenOptions={({ route, navigation }) => ({
       headerShown: false,
       gestureEnabled: true,

@@ -48,22 +48,8 @@ import MaterialCommunityIcons from 'react-native-vector-icons/dist/MaterialCommu
 import Feather from 'react-native-vector-icons/dist/Feather';
 import { ScrollView } from 'react-native-gesture-handler';
 import i18n from 'i18n-js';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-function Feed() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Feed Screen</Text>
-    </View>
-  );
-}
-
-function Article() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Article Screen</Text>
-    </View>
-  );
-}
 function CustomDrawerContent(props) {
 
   const context = React.useContext(OIContext)
@@ -76,6 +62,7 @@ function CustomDrawerContent(props) {
   const [colls3, setColls3] = React.useState(false);
   const [colls4, setColls4] = React.useState(false);
   const [colls5, setColls5] = React.useState(false);
+  const [user, setUser] = React.useState(null);
 
   React.useEffect(() => {
     const subscriber = firestore()
@@ -84,23 +71,50 @@ function CustomDrawerContent(props) {
       .onSnapshot(documentSnapshot => {
         var data = documentSnapshot.data()
         // console.log(documentSnapshot.data())
-        data==undefined?
-        null
-        :
-          storage()
-          .ref( data.profilePic) //name in storage in firebase console
-          .getDownloadURL()
-          .then((url) => {
-            setImageUrl(url);
-            // console.log(url)
-          })
-          .catch((e) => console.log('Errors while downloading => ', e));
+        data.profilePic==undefined?null: setImageUrl(data.profilePic);
+
+        firestore()
+        .collection('users')
+        .doc(context.mobile)
+        .onSnapshot(documentSnapshot => {
+          var data2 = documentSnapshot.data()
+          setUser(data2);
+        });
+
+        // data==undefined?
+        // null
+        // :
+        //   storage()
+        //   .ref( data.profilePic) //name in storage in firebase console
+        //   .getDownloadURL()
+        //   .then((url) => {
+            
+        //     console.log(url)
+        //   })
+        //   .catch((e) => console.log('Errors while downloading => ', e));
       });
 
     // Stop listening for updates when no longer required
     return () => subscriber();
   }, [imageurl,context.mobile]);
 
+  const logout =(props)=>{
+    context.setUser(null)
+    props.navigation.navigate('LanguageSelect')
+    removeItemValue()
+  }
+
+  const removeItemValue = async () => {
+    try {
+      await AsyncStorage.removeItem("user");
+    }
+    catch (exception) {
+      // return false;
+    }
+  
+  
+    
+  }
   return (
     <DrawerContentScrollView style={{backgroundColor:'#FFCE31'}} {...props}>
       <LinearGradient start={{x: 1, y: 1}} end={{x: 1, y: 0}} 
@@ -113,12 +127,12 @@ function CustomDrawerContent(props) {
           }
           
             {
-              context.user==[]?
+              user==null?
               <Text>--</Text>
               :
               <View style={{paddingLeft:10}}>
-              <Text style={styles.username}>{context.user.first_name} {context.user.last_name}</Text>
-              <Text style={[styles.username,{fontSize:12}]}>{context.user.email} </Text>
+              <Text style={styles.username}>{user.first_name} {user.last_name}</Text>
+              <Text style={[styles.username,{fontSize:12}]}>{user.email} </Text>
               </View>
             }
           
@@ -434,7 +448,7 @@ function CustomDrawerContent(props) {
           <View style={{backgroundColor:'gray',height:1,width:'90%',marginTop:5,marginBottom:-5,alignSelf:'center'}} />
 
           <TouchableHighlight 
-          onPress={()=>props.navigation.navigate('Logout')}
+          onPress={()=>logout(props)}
           style={[styles.button,{alignSelf:'center',width:'60%'}]} 
           underlayColor={'gray'}>
             <View style={styles.buttonView}>

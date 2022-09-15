@@ -1,4 +1,4 @@
-import { View, Text, StatusBar, TouchableHighlight , Image , TextInput, TouchableOpacity ,ScrollView} from 'react-native'
+import { View, Text, StatusBar,Platform, TouchableHighlight , Image , TextInput, TouchableOpacity ,ScrollView} from 'react-native'
 import React, { useEffect, useState ,useContext } from "react";
 import styles from '../styles/style'
 import { OIContext } from '../context/Context';
@@ -205,40 +205,47 @@ export default function UploadVehicleDocuments() {
       const filename = name+filetype;
       const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
       
-      if(doc==1){
+
+      console.log(filename)
+      
+      
+      setTransferred(0);
+      const reference = storage().ref(filename);
+      
+      await reference.putFile(uploadUri);
+
+
+      const url = await reference.getDownloadURL();
+      console.log(url)
+        if(doc==1){
           setUploading1(true)
           setDone1(true)
-          data.push({revenueLicense:filename})     
+          data.push({revenueLicense:url})     
       }
       else if(doc==2){
           setUploading2(true)
           setDone2(true)
-          data.push({vehicleRegistration:filename})      
+          data.push({vehicleRegistration:url})      
       }
       else if(doc==3){
         setDone3(true)
           setUploading3(true)
 
-          data.push({vehicleInsurance:filename})    
+          data.push({vehicleInsurance:url})    
       }
-      console.log(filetype)
-      
-      
-      setTransferred(0);
-      const task = storage()
-        .ref(filename)
-        .putFile(uploadUri);
+
+
       // set progress state
-      task.on('state_changed', snapshot => {
-        setTransferred(
-          Math.round(snapshot.bytesTransferred / snapshot.totalBytes) * 10000
-        );
-      });
-      try {
-        await task;
-      } catch (e) {
-        console.error(e);
-      }
+      // task.on('state_changed', snapshot => {
+      //   setTransferred(
+      //     Math.round(snapshot.bytesTransferred / snapshot.totalBytes) * 10000
+      //   );
+      // });
+      // try {
+      //   await task;
+      // } catch (e) {
+      //   console.error(e);
+      // }
       
 
       if(doc==1){
