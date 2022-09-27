@@ -9,6 +9,8 @@ import i18n from 'i18n-js';
 import { useNavigation } from '@react-navigation/native';
 import { Question1 } from '../datasets/Question1';
 import LinearGradient from 'react-native-linear-gradient';
+import firestore from '@react-native-firebase/firestore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // import {addDocument} from '../api/register'
 
@@ -22,9 +24,36 @@ export default function VehicalReg1() {
 
     const save = ()=>{
       addVehicle(answer==1?'yes':'no',context.mobile)
-      navigation.navigate('VehicleRgistration')
+      goToNext()
     }
+    const goToNext=()=>{
+      firestore()
+      .collection('users')
+      .doc(context.mobile)
+      .update({
+          signUpProcess:4
+      })
+      .then(() => {
+        firestore()
+        .collection('users')
+        .doc(context.mobile)
+        .get()
+        .then(documentSnapshot => {
+            console.log(documentSnapshot.data())
+            storeUserData(documentSnapshot.data())
+          navigation.navigate('VehicleRgistration')
+        });
+      });
+  }
+  const storeUserData = async (value) => {
+    try {
+      const jsonValue = JSON.stringify(value)
+      await AsyncStorage.setItem('user', jsonValue)
 
+    } catch (e) {
+      // saving error
+    }
+  }
   return (
     <View style={styles.container}>
         <StatusBar

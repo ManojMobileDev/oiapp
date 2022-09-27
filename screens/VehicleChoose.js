@@ -24,9 +24,20 @@ export default function VehicalChoose() {
       // let vehicle = answer==1?'tuk':answer==2?'nano/car/mini':answer==3?'minivan/van':answer==4?'bike':'truck'
       let data ={vehicle: choice}
       updateVehicle(data,context.mobile)
-      navigation.navigate('DrivingLicense')
-      console.log(choice)
+      goToNext()
     }
+    const goToNext=()=>{
+      firestore()
+      .collection('users')
+      .doc(context.mobile)
+      .update({
+          signUpProcess:5
+      })
+      .then(() => {
+          console.log('User updated!');
+          navigation.navigate('DrivingLicense')
+      });
+  }
     const vehicleCollection = firestore().collection('vehicles');
 
     const getVehicles = () => {
@@ -140,12 +151,21 @@ export default function VehicalChoose() {
 
         </View>
         
+                {
+                  answer==null?
+                  <TouchableHighlight style={[styles.button,{backgroundColor:'rgba(0,0,0,0.2)'}]}>
+                  <View style={styles.buttonView}>
+                      <Text style={[styles.buttonText,{color:'gray'}]}>{i18n.t('reg1.button')}</Text>
+                  </View>
+              </TouchableHighlight>
+                  :
+                  <TouchableHighlight style={styles.button} onPress={()=>save()}>
+                  <View style={styles.buttonView}>
+                      <Text style={styles.buttonText}>{i18n.t('reg1.button')}</Text>
+                  </View>
+              </TouchableHighlight>
+                }
 
-        <TouchableHighlight style={styles.button} onPress={()=>save()}>
-            <View style={styles.buttonView}>
-                <Text style={styles.buttonText}>{i18n.t('reg1.button')}</Text>
-            </View>
-        </TouchableHighlight>
         </ScrollView>
     </View>
   )

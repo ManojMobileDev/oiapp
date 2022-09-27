@@ -9,7 +9,7 @@ import i18n from 'i18n-js';
 import { useNavigation } from '@react-navigation/native';
 import { Question1 } from '../datasets/Question1';
 import LinearGradient from 'react-native-linear-gradient';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import storage from '@react-native-firebase/storage';
 import * as Animatable from 'react-native-animatable';
 import { SwipeablePanel } from 'rn-swipeable-panel';
@@ -33,6 +33,7 @@ import ImagePickerChooser from '../components/ImagePickerChooser'
 
 import { checkExist } from '../api/register';
 import Uploading from '../components/Uploading';
+import firestore from '@react-native-firebase/firestore';
 
 export default function UploadDocuments() {
 
@@ -252,10 +253,55 @@ export default function UploadDocuments() {
       const task = storage()
         .ref(filename)
         .putFile(uploadUri);
+        // await reference.putFile(uploadUri);
 
-        const url = await reference.getDownloadURL();
 
-        console.log(url)
+        // const url = await reference.getDownloadURL();
+
+        // console.log(url)
+        // if(doc==1){
+        //   if(no==1){
+        //     setUploading1(true)
+        //     setDone1(true)
+        //     data.push({nicFront:url})
+        //   } 
+        //   else{
+  
+        //     data.push({nicBack:url})
+        //   }       
+        // }
+        // else if(doc==2){
+        //   if(no==1){
+        //     setUploading2(true)
+        //     setDone2(true)
+        //     data.push({drivingLicenseSide1:url})
+        //   } 
+        //   else{
+  
+        //     data.push({drivingLicenseSide2:url})
+        //   }       
+        // }
+        // else if(doc==3){
+        //   setDone3(true)
+        //     setUploading3(true)
+  
+        //     data.push({billingProof:url})    
+        // }
+        // else if(doc==4){
+        //   setDone4(true)
+        //     setUploading4(true)
+  
+        //     data.push({profilePic:url})
+        // }
+      // set progress state
+      task.on('state_changed', snapshot => {
+        // console.log(snapshot.ref)
+        setTransferred(
+          Math.round(snapshot.bytesTransferred / snapshot.totalBytes) * 10000
+        );
+        snapshot.ref.getDownloadURL().then((url) => {
+          console.log(url)
+          if(url!=null){
         if(doc==1){
           if(no==1){
             setUploading1(true)
@@ -290,11 +336,11 @@ export default function UploadDocuments() {
   
             data.push({profilePic:url})
         }
-      // set progress state
-      task.on('state_changed', snapshot => {
-        setTransferred(
-          Math.round(snapshot.bytesTransferred / snapshot.totalBytes) * 10000
-        );
+      
+      }
+      
+        });
+
       });
       try {
         await task;
@@ -362,9 +408,39 @@ export default function UploadDocuments() {
       
     };
 
+    const goToNext=()=>{
+      firestore()
+      .collection('users')
+      .doc(context.mobile)
+      .update({
+          signUpProcess:8
+      })
+      .then(() => {
+        firestore()
+        .collection('users')
+        .doc(context.mobile)
+        .get()
+        .then(documentSnapshot => {
+            console.log(documentSnapshot.data())
+            storeUserData(documentSnapshot.data())
+            navigation.navigate('UploadVehicleDocuments')
+        });
+      });
+  }
+
     useEffect(() => {
-      console.log(context.mobile)
+      // console.log(context.mobile)
     },[]);
+
+    const storeUserData = async (value) => {
+      try {
+        const jsonValue = JSON.stringify(value)
+        await AsyncStorage.setItem('user', jsonValue)
+  
+      } catch (e) {
+        // saving error
+      }
+    }
 
   return (
     <View style={styles.container}>
@@ -429,7 +505,7 @@ export default function UploadDocuments() {
         
       {
         doc1 && doc2 && doc3 && doc4?
-        <TouchableHighlight style={styles.button} onPress={()=>navigation.navigate('UploadVehicleDocuments')}>
+        <TouchableHighlight style={styles.button} onPress={()=>goToNext()}>
             <View style={styles.buttonView}>
                 <Text style={styles.buttonText}>{i18n.t('doc.button')}</Text>
             </View>

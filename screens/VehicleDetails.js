@@ -9,7 +9,9 @@ import { useNavigation } from '@react-navigation/native';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
 import { updateVehicle } from '../api/register';
+import firestore from '@react-native-firebase/firestore';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Animatable from 'react-native-animatable';
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -73,7 +75,35 @@ export default function VehicleDetails() {
         }
         
         updateVehicle(data,context.mobile)
-        navigation.navigate('UploadDocuments')
+        goToNext()
+        }
+      }
+      const goToNext=()=>{
+        firestore()
+        .collection('users')
+        .doc(context.mobile)
+        .update({
+            signUpProcess:7
+        })
+        .then(() => {
+            firestore()
+            .collection('users')
+            .doc(context.mobile)
+            .get()
+            .then(documentSnapshot => {
+                console.log(documentSnapshot.data())
+                storeUserData(documentSnapshot.data())
+                navigation.navigate('UploadDocuments')
+            });
+        });
+    }
+    const storeUserData = async (value) => {
+        try {
+          const jsonValue = JSON.stringify(value)
+          await AsyncStorage.setItem('user', jsonValue)
+    
+        } catch (e) {
+          // saving error
         }
       }
   return (
@@ -97,6 +127,7 @@ export default function VehicleDetails() {
                 value={lno}
                 placeholder={i18n.t('details.placeholder1')}
                 keyboardType="default"
+                placeholderTextColor={'gray'}
                 
             />
         </Animatable.View>
@@ -108,6 +139,7 @@ export default function VehicleDetails() {
                 value={make}
                 placeholder={i18n.t('details.placeholder2')}
                 keyboardType="default"
+                placeholderTextColor={'gray'}
                 
             />
         </Animatable.View>
@@ -119,6 +151,7 @@ export default function VehicleDetails() {
                 value={model}
                 placeholder={i18n.t('details.placeholder3')}
                 keyboardType="default"
+                placeholderTextColor={'gray'}
                 
             />
         </Animatable.View>

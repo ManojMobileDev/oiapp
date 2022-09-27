@@ -17,8 +17,8 @@ import { useNavigation } from '@react-navigation/native';
 import RBSheet from "react-native-raw-bottom-sheet";
 import i18n from 'i18n-js';
 import firestore from '@react-native-firebase/firestore';
-// import Geolocation from 'react-native-geolocation-service';
-import Geolocation from '@react-native-community/geolocation';
+import Geolocation from 'react-native-geolocation-service';
+// import Geolocation from '@react-native-community/geolocation';
 import {  PermissionsAndroid } from 'react-native';
 
 const windowWidth = Dimensions.get('window').width;
@@ -30,13 +30,15 @@ export default function Home() {
     
     const [bg, setBg] = useState('green');
     const [coords, setCoods] = useState(null); 
-    const [marker, setMarker] = useState('');
+    const [realcoords, setRealCoods] = useState(null); 
+    const [marker, setMarker] = useState(null);
 
     const navigation = useNavigation();
 
     const context = useContext(OIContext)
 
     const refRBSheet = useRef();
+    const refRBSheet2 = useRef();
 
     const toggleOnline =()=>{
 
@@ -46,7 +48,7 @@ export default function Home() {
         .doc(context.mobile)
         .update({online:!online})
         .then(() => {
-            console.log('updated')
+            // console.log('updated')
             setOnline(!online)
         })
     }
@@ -70,7 +72,7 @@ export default function Home() {
                 
                     if (documentSnapshot.exists) {
                         var data2 = documentSnapshot.data()
-                        // console.log(data2)
+                        console.log(data2)
                         setMarker(data2.imgdark)
                     }
                   });
@@ -79,7 +81,7 @@ export default function Home() {
           });
     }
 
-    async function requestPermissions() {
+     const requestPermissions =async()=> {
         if (Platform.OS === 'ios') {
           const auth = await Geolocation.requestAuthorization("whenInUse");
           if(auth === "granted") {
@@ -90,25 +92,29 @@ export default function Home() {
         if (Platform.OS === 'android') {
           await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+            PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+            // console.log(PermissionsAndroid.RESULTS)
           );
+          
           if ('granted' === PermissionsAndroid.RESULTS.GRANTED) {
             getLocation()          }
         }
       }
 
-    //   const getLocation=()=>{
-    //     Geolocation.getCurrentPosition(
-    //         (position) => {
-    //           console.log(position);
-    //           setCoods(position.coords)
-    //         },
-    //         (error) => {
-    //           // See error code charts below.
-    //           console.log(error.code, error.message);
-    //         },
-    //         { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-    //     );
-    //   }
+      const getLocation=()=>{
+        Geolocation.getCurrentPosition(
+            (position) => {
+            //   console.log(position);
+              setCoods(position.coords)
+              setRealCoods(position.coords)
+            },
+            (error) => {
+              // See error code charts below.
+              console.log(error.code, error.message);
+            },
+            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+        );
+      }
 
     const getCurrent =()=>{
         // navigator.geolocation.watchPosition(
@@ -131,24 +137,25 @@ export default function Home() {
         //     })
         console.log(navigator)
     }
-      const getLocation = () => {
-        Geolocation.getCurrentPosition(
-          (pos) => {
-            setCoods(pos.coords);
-          },
-          (error) => Alert.alert('GetCurrentPosition Error', JSON.stringify(error)),
-          { enableHighAccuracy: true }
-        );
-      };
+    //   const getLocation = () => {
+    //     Geolocation.getCurrentPosition(
+    //       (pos) => {
+    //         setCoods(pos.coords);
+    //       },
+    //       (error) => console.log('GetCurrentPosition Error', JSON.stringify(error)),
+    //       { enableHighAccuracy: true }
+    //     );
+    //   };
+
 
     useEffect(() => {
         requestPermissions()
         getVehicle()
-        getCurrent()
+        // getCurrent()
     },[]);
 
   return (
-    <View style={[styles.container,{padding:0}]}>
+    <View style={[styles.container,{padding:0}]} onLayout={()=>getVehicle()}>
         <StatusBar
             animated={true}
             backgroundColor="#fff"
@@ -166,32 +173,34 @@ export default function Home() {
                     latitude: coords.latitude,
                     longitude: coords.longitude,
                     latitudeDelta: 0.015,
-                    longitudeDelta: 0.0121,
-                    coordinate: new AnimatedRegion({
-                        latitude: coords.latitude,
-                        longitude: coords.longitude,
-                        latitudeDelta: 0,
-                        longitudeDelta: 0
-                      })
+                    longitudeDelta: 0.0121
+                }}
+                
+                onUserLocationChange={event => {
+                    setRealCoods(event.nativeEvent.coordinate);
+                    console.log(event.nativeEvent)
                 }}
                 mapType='standard'
-                showUserLocation
-                followUserLocation
+                showsUserLocation={true} 
+                // followUserLocation
                 loadingEnabled
+                followsUserLocation={true}
+                
                 >
-                    {/* {marker==''?
+                    {realcoords==null?
                     null
-                    : */}
-                        <Marker.Animated
+                    :
+                        <Marker
                             key={1}
-                            coordinate={{ latitude : coords.latitude , longitude : coords.longitude }}
+                            coordinate={{ latitude : realcoords.latitude , longitude : realcoords.longitude }}
                             title={'Me'}
                             onPress={(click)=>{console.log('click')}}
                             hideCallout
                             // image={{uri:marker}}
+                            flat={true}
                             // description={'rest esc'}
                         />                    
-                    {/* } */}
+                     } 
 
 
                 </MapView>               
@@ -205,7 +214,7 @@ export default function Home() {
             height={windowHeight/2}
             customStyles={{
             wrapper: {
-                backgroundColor: "transparent"
+                backgroundColor: "rgba(0,0,0,0.2)"
             },
             draggableIcon: {
                 backgroundColor: "#000",
@@ -280,6 +289,49 @@ export default function Home() {
             </View>
         </View>
       </RBSheet>
+
+      <RBSheet
+            ref={refRBSheet2}
+            closeOnDragDown={true}
+            closeOnPressMask={true}
+            height={windowHeight/2}
+            customStyles={{
+            wrapper: {
+                backgroundColor: "rgba(0,0,0,0.2)"
+            },
+            draggableIcon: {
+                backgroundColor: "#000",
+                marginTop:0
+            },
+            container: {
+                borderTopLeftRadius:50,
+                borderTopRightRadius:50,
+                padding:15,
+                alignItems:'center'
+            },
+            }}
+        >
+        <View>
+            {
+                marker==null?
+                null:
+                <View>
+                    <Image source={{uri:marker.imgdark}} style={{width:50,height:30,resizeMode:'contain'}}/> 
+                    <Text style={styles.question}>{marker.type}</Text>
+                </View>
+                        
+            }
+            <View style={styles.hr}/>
+            <View >
+                <Text style={styles.question}>{i18n.t('request.pickup')}</Text>
+                
+                <Text style={styles.question}>{i18n.t('request.drop')}</Text>
+
+            </View>
+        </View>
+      </RBSheet>
+
+
         <View style={styles.absoluteContainer}>
 
              
@@ -309,10 +361,10 @@ export default function Home() {
             </View>
             <View style={styles.row}>
 
-                <TouchableOpacity style={[styles.menu,{padding:7,borderRadius:0}]} onPress={()=>{}}>
+                <TouchableOpacity style={[styles.menu,{padding:7,borderRadius:0}]} onPress={()=>{refRBSheet2.current.open()}}>
                     <View style={styles.row}>
-                        <Ionicons name={'refresh'} size={17}/>
-                        <Text>  {i18n.t('home.refresh')}</Text>
+                        <Ionicons name={'refresh'} size={17} color={'black'}/>
+                        <Text style={styles.question}>  {i18n.t('home.refresh')}</Text>
                     </View>
                 </TouchableOpacity>
 

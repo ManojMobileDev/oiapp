@@ -125,7 +125,7 @@ export default function SignIn() {
                 onFocus={()=>{setPView(true)}}
                 onBlur={()=>setPView(false)} 
                 secureTextEntry={ps}
-                
+                placeholderTextColor={'gray'}
             />
 
 {

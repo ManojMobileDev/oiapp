@@ -80,17 +80,7 @@
   },
   "choose": {
     "title": "Please Choose Vehicle",
-    "question":"Please choose how you would like to partner with us",
-    "topic1":"Tuk",
-    "11":"Select this if you vehicle is a Tuk.", 
-    "topic2":"Nano/Car/Mini",
-    "21":"Select this if you vehicle is a Nano/Car/Mini.",
-    "topic3":"Minivan/Van",
-    "31":"Select this if you vehicle is a Minivan/Van.",
-    "topic4":"Bike",
-    "41":"Select this if you vehicle is a Bike.",
-    "topic5":"Truck",
-    "51":"Select this if you vehicle is a Truck.",   
+    "question":"Please choose how you would like to partner with us",  
     "button":"Next"
   },
   "driving": {
@@ -213,6 +203,12 @@
   "ref": {
     "title": "Referrel",
     "placeholder":"Enter a Referrel Code",
+    "next":"Next",
+    "skip":"SKIP"
+  },
+  "request": {
+    "pickup": "Pickup",
+    "drop":"Drop",
     "next":"Next",
     "skip":"SKIP"
   }

@@ -215,7 +215,7 @@ export default function PhoneNumber() {
                         placeholder="00 000 0000"
                         keyboardType="numeric"
                         textAlignVertical='center'
-                       
+                        placeholderTextColor={'gray'}
                     />
 
                 </Animatable.View>

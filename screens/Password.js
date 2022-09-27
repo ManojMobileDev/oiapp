@@ -48,27 +48,6 @@ export default function Password() {
     
     const navigation = useNavigation();
 
-
-    const changeId = async (value) => {
-        try {
-          await AsyncStorage.setItem('id', value.toString())
-        } catch (e) {
-          // saving error
-        }
-        context.setId(value)
-      }
-
-      const getId = async () => {
-        try {
-          const value = await AsyncStorage.getItem('id')
-          if(value !== null) {
-            context.setId(value)
-            // value previously stored
-          }
-        } catch(e) {
-          // error reading value
-        }
-      }
     const updatePassword =  (pass,repass)=>{
         if(pass==''){
             setError1(true)
@@ -87,11 +66,21 @@ export default function Password() {
                     .doc(context.mobile)
                     .update({
                         password: pass,
+                        signUpProcess: 2,
                     })
                     .then(() => {
-                        console.log('User updated!');
                         setMatch(false)
-                        navigation.navigate('Refferel')
+
+                        firestore()
+                        .collection('users')
+                        .doc(context.mobile)
+                        .get()
+                        .then(documentSnapshot => {
+                            // console.log(documentSnapshot.metadata)
+                            storeUserData(documentSnapshot.data())
+                            navigation.navigate('Refferel')
+                        });
+                        
                     });
             }
             else{
@@ -105,23 +94,21 @@ export default function Password() {
     console.log(context.mobile)
     }
 
-    const getData = () =>{
-        firebase
-        .app()
-        .database('https://oi-app-2af0a-default-rtdb.asia-southeast1.firebasedatabase.app/')
-        .ref('/users/')
-        .on('value', snapshot => {
-            console.log('User data: ', snapshot.val());
-        });
-    }
-
     const [itemsArray, setItemsArray] = React.useState([]);
 
     useEffect(() => {
 
     }, []);
 
-
+    const storeUserData = async (value) => {
+        try {
+          const jsonValue = JSON.stringify(value)
+          await AsyncStorage.setItem('user', jsonValue)
+    
+        } catch (e) {
+          // saving error
+        }
+      }
   return (
     <View style={[styles.container,{padding:0}]}>
         <StatusBar
@@ -147,7 +134,7 @@ export default function Password() {
                 onFocus={()=>{setPView(true)}}
                 onBlur={()=>setPView(false)} 
                 secureTextEntry={ps}
-                
+                placeholderTextColor={'gray'}
             />
 
                 {
@@ -182,6 +169,7 @@ export default function Password() {
                 onFocus={()=>{setRPView(true);setMatch(false)}}
                 onBlur={()=>setRPView(false)} 
                 secureTextEntry={rps}
+                placeholderTextColor={'gray'}
             />
 
                 {

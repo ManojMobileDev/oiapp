@@ -10,6 +10,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Question1 } from '../datasets/Question1';
 import LinearGradient from 'react-native-linear-gradient';
 import storage from '@react-native-firebase/storage';
+import firestore from '@react-native-firebase/firestore';
 
 import { SwipeablePanel } from 'rn-swipeable-panel';
 
@@ -30,6 +31,7 @@ import {
 import * as ImagePicker from "react-native-image-picker"
 import ImagePickerChooser from '../components/ImagePickerChooser'
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { checkExist } from '../api/register';
 import Uploading from '../components/Uploading';
 
@@ -212,40 +214,48 @@ export default function UploadVehicleDocuments() {
       setTransferred(0);
       const reference = storage().ref(filename);
       
-      await reference.putFile(uploadUri);
+      const task = storage()
+      .ref(filename)
+      .putFile(uploadUri);
 
 
-      const url = await reference.getDownloadURL();
-      console.log(url)
-        if(doc==1){
-          setUploading1(true)
-          setDone1(true)
-          data.push({revenueLicense:url})     
-      }
-      else if(doc==2){
-          setUploading2(true)
-          setDone2(true)
-          data.push({vehicleRegistration:url})      
-      }
-      else if(doc==3){
-        setDone3(true)
-          setUploading3(true)
+      // const url = await reference.getDownloadURL();
+      // console.log(url)
 
-          data.push({vehicleInsurance:url})    
-      }
 
 
       // set progress state
-      // task.on('state_changed', snapshot => {
-      //   setTransferred(
-      //     Math.round(snapshot.bytesTransferred / snapshot.totalBytes) * 10000
-      //   );
-      // });
-      // try {
-      //   await task;
-      // } catch (e) {
-      //   console.error(e);
-      // }
+      task.on('state_changed', snapshot => {
+        setTransferred(
+          Math.round(snapshot.bytesTransferred / snapshot.totalBytes) * 10000
+        );
+        snapshot.ref.getDownloadURL().then((url) => {
+          if(url!=null){
+          if(doc==1){
+            setUploading1(true)
+            setDone1(true)
+            data.push({revenueLicense:url})     
+        }
+        else if(doc==2){
+            setUploading2(true)
+            setDone2(true)
+            data.push({vehicleRegistration:url})      
+        }
+        else if(doc==3){
+          setDone3(true)
+            setUploading3(true)
+  
+            data.push({vehicleInsurance:url})    
+        }
+
+      }
+        });
+      });
+      try {
+        await task;
+      } catch (e) {
+        console.error(e);
+      }
       
 
       if(doc==1){
@@ -289,6 +299,37 @@ export default function UploadVehicleDocuments() {
       }
       
     };
+
+    const goToNext=()=>{
+      firestore()
+      .collection('users')
+      .doc(context.mobile)
+      .update({
+          signUpProcess:9
+      })
+      .then(() => {
+          console.log('User updated!');
+          firestore()
+          .collection('users')
+          .doc(context.mobile)
+          .get()
+          .then(documentSnapshot => {
+              console.log(documentSnapshot.data())
+              storeUserData(documentSnapshot.data())
+              navigation.navigate('Complete')
+          });
+      });
+  }
+
+  const storeUserData = async (value) => {
+    try {
+      const jsonValue = JSON.stringify(value)
+      await AsyncStorage.setItem('user', jsonValue)
+
+    } catch (e) {
+      // saving error
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -346,7 +387,7 @@ export default function UploadVehicleDocuments() {
         
         {
         doc1 && doc2 && doc3 ?
-        <TouchableHighlight style={styles.button} onPress={()=>navigation.navigate('Complete')}>
+        <TouchableHighlight style={styles.button} onPress={()=>goToNext()}>
             <View style={styles.buttonView}>
                 <Text style={styles.buttonText}>{i18n.t('doc2.button')}</Text>
             </View>

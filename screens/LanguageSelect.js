@@ -1,4 +1,4 @@
-import { View, Text, StatusBar, TouchableHighlight, Image, TouchableOpacity } from 'react-native'
+import { View, Text, StatusBar, TouchableHighlight, Image, TouchableOpacity, ScrollView } from 'react-native'
 import React, { useEffect, useState ,useContext } from "react";
 import styles from '../styles/style'
 import { OIContext } from '../context/Context';
@@ -39,14 +39,15 @@ export default function LanguageSelect() {
       }
 
   return (
-    <View style={styles.container}>
+    <View style={{padding:0,margin:0,flex:1,backgroundColor:'white'}} >
         <StatusBar
             animated={true}
             backgroundColor="#fff"
             barStyle={'dark-content'}
             hidden={false} />
 
-        <Header back={false} menu={false} title={''} subTitle={''} headerColor={'transparent'} />
+        {/* <Header back={false} menu={false} title={''} subTitle={''} headerColor={'transparent'} /> */}
+        <ScrollView contentContainerStyle={{padding:15}}>
         <Circle icon={<Image source={require('../images/language.png')} style={{width:40,height:40,tintColor:'#fff'}} />} />
         <View  key={key}>
         <Animatable.Text animation={'fadeIn'} style={styles.title}>{i18n.t('lang.title')}</Animatable.Text>
@@ -76,12 +77,12 @@ export default function LanguageSelect() {
                 <View style={styles.languagesInner2}>
                     {
                         context.language=='si'?
-                        <Image source={require('../images/sinhala.png')} style={{width:40,height:20}} />
+                        <Image source={require('../images/myanmar.jpg')} style={{width:40,height:20}} />
                         :
-                        <Image source={require('../images/graysinhala.png')} style={{width:40,height:20}} />
+                        <Image source={require('../images/graymyanmar.jpg')} style={{width:40,height:20}} />
                     }
                     
-                    <Text style={[styles.languagesText,{color:context.language=='si'?'black':'#C4C4C4'}]}>සිංහල</Text>                    
+                    <Text style={[styles.languagesText,{color:context.language=='si'?'black':'#C4C4C4'}]}>မြန်မာ</Text>                    
                 </View>
                 <FontAwesome name={'check'} size={22} color={context.language=='si'?'#43D55B':'#C4C4C4'}/>
             </TouchableOpacity>
@@ -89,7 +90,7 @@ export default function LanguageSelect() {
             
             <View style={styles.hr} />
 
-            <TouchableOpacity style={styles.languagesInner} onPress={()=>{changeLanguage('tm');setKey(3)}}>
+            {/* <TouchableOpacity style={styles.languagesInner} onPress={()=>{changeLanguage('tm');setKey(3)}}>
                 <View style={styles.languagesInner2}>
                     {
                         context.language=='tm'?
@@ -101,7 +102,7 @@ export default function LanguageSelect() {
                     <Text style={[styles.languagesText,{color:context.language=='tm'?'black':'#C4C4C4'}]}>தமிழ்</Text>                    
                 </View>
                 <FontAwesome name={'check'} size={22} color={context.language=='tm'?'#43D55B':'#C4C4C4'}/>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
 
         </Animatable.View>
@@ -111,6 +112,8 @@ export default function LanguageSelect() {
                 <Animatable.Text key={key} animation={'fadeIn'} style={styles.buttonText}>{i18n.t('lang.button')}</Animatable.Text>
             </View>
         </TouchableHighlight>
+
+        </ScrollView>
     </View>
   )
 }

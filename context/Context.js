@@ -34,15 +34,19 @@ export const OIProvider = ({ children }) => {
   }  
   
   const getUser = async (navigation) => {
+    var nav=['SignUp','Password','Refferel','VehicalReg1','VehicleChoose','DrivingLicense','VehicleDetails','UploadDocuments','UploadVehicleDocuments','Home']
     try {
       const value = await AsyncStorage.getItem('user')
       if(value !== null) {
         setUser(value)
         
+
         if (navigation!=undefined){
-          navigation.navigate('Home')
+          var path = nav[JSON.parse(value).signUpProcess]
+          console.log(path)
+          navigation.navigate(path)
+          // navigation.navigate('Home')
         }
-        console.log(value)
         // value previously stored
       }
       else{

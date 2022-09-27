@@ -10,6 +10,7 @@ import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
 import { updateVehicle } from '../api/register';
 import * as Animatable from 'react-native-animatable';
+import firestore from '@react-native-firebase/firestore';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -72,10 +73,22 @@ export default function DrivingLicense() {
             }
             
             updateVehicle(data,context.mobile)
-            navigation.navigate('VehicleDetails')            
+            goToNext()            
         }
 
       }
+      const goToNext=()=>{
+        firestore()
+        .collection('users')
+        .doc(context.mobile)
+        .update({
+            signUpProcess:6
+        })
+        .then(() => {
+            console.log('User updated!');
+            navigation.navigate('VehicleDetails')
+        });
+    }
 
   return (
     <View style={styles.container}>
@@ -99,12 +112,13 @@ export default function DrivingLicense() {
                 value={lno}
                 placeholder={i18n.t('driving.placeholder1')}
                 keyboardType="default"
+                placeholderTextColor={'gray'}
                 
             />
         </Animatable.View>
 
         <Animatable.View key={key2} animation={error2?'shake':'fadeIn'} style={[styles.inputView,{borderColor:error2?'red':'black',marginHorizontal:0}]}>
-            <TouchableOpacity onPress={()=>setOpen(true)} style={[styles.row,{width:windowWidth-50}]}>
+            <TouchableOpacity onPress={()=>{setOpen(true);setError2(false)}} style={[styles.row,{width:windowWidth-50}]}>
                 <Text style={[styles.input,{textAlignVertical:'center'}]}>{dLicenseExp}</Text>
                 <EvilIcons name={'calendar'} size={25}  color={'#94A3B8'}/>
             </TouchableOpacity>
@@ -114,7 +128,7 @@ export default function DrivingLicense() {
         <Text style={[styles.question,{marginTop:20}]}>{i18n.t('driving.q2')}</Text>
         
         <Animatable.View key={key3} animation={error3?'shake':'fadeIn'} style={[styles.inputView,{borderColor:error3?'red':'black',marginHorizontal:0}]}>
-            <TouchableOpacity onPress={()=>setOpen2(true)} style={[styles.row,{width:windowWidth-50}]}>
+            <TouchableOpacity onPress={()=>{setOpen2(true);setError3(false)}} style={[styles.row,{width:windowWidth-50}]}>
                 <Text style={[styles.input,{textAlignVertical:'center'}]}>{rLicenseExp}</Text>
                 <EvilIcons name={'calendar'} size={25}  color={'#94A3B8'}/>
             </TouchableOpacity>
@@ -124,7 +138,7 @@ export default function DrivingLicense() {
         <Text style={[styles.question,{marginTop:20}]}>{i18n.t('driving.q3')} </Text>
         
         <Animatable.View key={key4} animation={error4?'shake':'fadeIn'} style={[styles.inputView,{borderColor:error4?'red':'black',marginHorizontal:0}]}>
-            <TouchableOpacity onPress={()=>setOpen3(true)} style={[styles.row,{width:windowWidth-50}]}>
+            <TouchableOpacity onPress={()=>{setOpen3(true);setError4(false)}} style={[styles.row,{width:windowWidth-50}]}>
                 <Text style={[styles.input,{textAlignVertical:'center'}]}>{rInsuranceExp}</Text>
                 <EvilIcons name={'calendar'} size={25}  color={'#94A3B8'}/>
             </TouchableOpacity>

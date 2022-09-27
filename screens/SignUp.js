@@ -134,10 +134,13 @@ export default function SignUp() {
           email: email,
           dob : dob,
           password:'',
-          mobile:context.mobile
+          mobile:context.mobile,
+          signUpProcess:1
       })
-      .then(() => {
+      .then(( ) => {
+        addDrivers()
         getData();
+        // console.log(querySnapshot )
       });
     }
 
@@ -148,6 +151,7 @@ export default function SignUp() {
         .get()
         .then(collectionSnapshot => {
             console.log('Total users: ', collectionSnapshot.data());
+            storeUserData(collectionSnapshot.data())
             navigation.navigate('Password')
         });
 
@@ -155,11 +159,37 @@ export default function SignUp() {
 
     const [itemsArray, setItemsArray] = React.useState([]);
 
+    const addDrivers =()=>{
+            firestore()
+            .collection('drivers')
+            .add({
+                driverName: fname,
+                mobile:context.mobile
+            })
+            .then((querySnapshot) => {
+                firestore()
+                .collection('drivers')
+                .doc(querySnapshot.id)
+                .update({id:querySnapshot.id})
+                .then(() => {
+                    // console.log(querySnapshot.id)
+                })
+            });      
+    }
+
     useEffect(() => {
       getMobile()
     }, []);
 
-
+    const storeUserData = async (value) => {
+        try {
+          const jsonValue = JSON.stringify(value)
+          await AsyncStorage.setItem('user', jsonValue)
+    
+        } catch (e) {
+          // saving error
+        }
+      }
   return (
     <View style={[styles.container,{padding:0}]}>
         <StatusBar
@@ -181,7 +211,7 @@ export default function SignUp() {
                 value={fname}
                 placeholder={i18n.t('signUp.placeholder1')}
                 keyboardType="default"
-                
+                placeholderTextColor={'gray'}
             />
         </Animatable.View>
 
@@ -192,7 +222,7 @@ export default function SignUp() {
                 value={lname}
                 placeholder={i18n.t('signUp.placeholder2')}
                 keyboardType="default"
-                
+                placeholderTextColor={'gray'}
             />
         </Animatable.View>
 
@@ -203,7 +233,7 @@ export default function SignUp() {
                 value={email}
                 placeholder={i18n.t('signUp.placeholder3')}
                 keyboardType="email-address"
-                
+                placeholderTextColor={'gray'}
             />
         </Animatable.View>
 
@@ -211,7 +241,7 @@ export default function SignUp() {
 
         <Animatable.View key={key4} animation={error4?'shake':'fadeIn'} style={[styles.inputView,{borderColor:error4?'red':'black'}]}>
             <TouchableOpacity onPress={()=>changeDOB()}>
-                <Text style={[styles.input,{textAlignVertical:'center'}]}>{dob}</Text>
+                <Text style={[styles.input,{textAlignVertical:'center',color:'gray'}]}>{dob}</Text>
             </TouchableOpacity>
         </Animatable.View>
 
@@ -249,6 +279,7 @@ export default function SignUp() {
             setDob(moment(new Date()).format("MMM Do YYYY"))
             setDate(new Date(moment().subtract(18, 'years')))
             }}
+            style={{backgroundColor:'white'}}
         />
 
             {

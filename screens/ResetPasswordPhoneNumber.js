@@ -214,8 +214,7 @@ export default function ResetPasswordPhoneNumber() {
                         value={number}
                         placeholder="00 000 0000"
                         keyboardType="numeric"
-                        
-                       
+                        placeholderTextColor={'gray'}
                     />
 
                 </Animatable.View>

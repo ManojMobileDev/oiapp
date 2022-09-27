@@ -61,72 +61,9 @@ function MyStack() {
     </Stack.Navigator>
   );
 }
-function MyStack2() {
-  return (
-    <Stack.Navigator
-    initialRouteName='LanguageSelect' 
-    screenOptions={({ route, navigation }) => ({
-      headerShown: false,
-      gestureEnabled: true,
-      cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
-    })}>
-      <Stack.Screen name="Home" component={MainDrawer}/>
-      <Stack.Screen name="LanguageSelect" component={LanguageSelect} />
-      <Stack.Screen name="PhoneNumber" component={PhoneNumber} />
-      <Stack.Screen name="SignIn" component={SignIn} />
-      <Stack.Screen name="SignUp" component={SignUp} />
-      <Stack.Screen name="VehicalReg1" component={VehicalReg1} />
-      <Stack.Screen name="VehicleRgistration" component={VehicleRgistration} />
-      <Stack.Screen name="VehicleChoose" component={VehicleChoose} />
-      <Stack.Screen name="DrivingLicense" component={DrivingLicense} />
-      <Stack.Screen name="VehicleDetails" component={VehicleDetails} />
-      <Stack.Screen name="UploadDocuments" component={UploadDocuments} />
-      <Stack.Screen name="UploadVehicleDocuments" component={UploadVehicleDocuments} />
-      <Stack.Screen name="Complete" component={Complete} />
-      <Stack.Screen name="Password" component={Password} />
-      <Stack.Screen name="ResetPassword" component={ResetPassword} />
-      <Stack.Screen name="SignUpPhoneNumber" component={SignUpPhoneNumber} />
-      <Stack.Screen name="ResetPasswordPhoneNumber" component={ResetPasswordPhoneNumber} />
-    </Stack.Navigator>
-  );
-}
 
 export default function App() {
   
-//   const [screen, setScreen] = React.useState(<MyStack2 />);
-//   const context = useContext(OIContext)
-
-// const getData = async () => {
-//   try {
-//     const jsonValue = await AsyncStorage.getItem('user')
-//     return jsonValue != null ? 
-//     [
-//       // console.log(JSON.parse(jsonValue)),
-//     setScreen(<MyStack />),
-//     context.setUser(JSON.parse(jsonValue))
-//     // SplashScreen.hide()
-//     ]
-//     : 
-//     [console.log('no data'),
-//     setScreen(<MyStack2 />),
-//     ]
-//     ;
-//   } 
-//   catch(e) {
-//     // error reading value
-//   }
-//   finally{
-//     setTimeout(() => {
-//     SplashScreen.hide()
-      
-//     }, 1000);
-//   }
-// }
-
-// React.useEffect(() => {
-//   getData()  
-// },[]);
-
     return (
       
     <MyStack />

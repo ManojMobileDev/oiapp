@@ -9,6 +9,8 @@ import { OIContext } from '../context/Context';
 import { useNavigation } from '@react-navigation/native'
 import firestore from '@react-native-firebase/firestore';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 export default function Refferel() {
 
     const context = useContext(OIContext)
@@ -30,6 +32,7 @@ export default function Refferel() {
                     .doc(context.mobile)
                     .update({
                         referee: ref,
+                        signUpProcess:3
                     })
                     .then(() => {
                         console.log('User updated!');
@@ -40,6 +43,35 @@ export default function Refferel() {
 
     console.log(context.mobile)
     }
+
+    const goToNext=()=>{
+        firestore()
+        .collection('users')
+        .doc(context.mobile)
+        .update({
+            signUpProcess:3
+        })
+        .then(() => {
+            firestore()
+            .collection('users')
+            .doc(context.mobile)
+            .get()
+            .then(documentSnapshot => {
+                console.log(documentSnapshot.data())
+                storeUserData(documentSnapshot.data())
+                navigation.navigate('VehicalReg1')
+            });
+        });
+    }
+    const storeUserData = async (value) => {
+        try {
+          const jsonValue = JSON.stringify(value)
+          await AsyncStorage.setItem('user', jsonValue)
+    
+        } catch (e) {
+          // saving error
+        }
+      }
 
   return (
     <View style={[styles.container,{padding:0}]}>
@@ -64,6 +96,7 @@ export default function Refferel() {
                 value={ref}
                 placeholder={i18n.t('ref.placeholder')}
                 keyboardType="default"
+                placeholderTextColor={'gray'}
                 
             />
             </Animatable.View>
@@ -73,8 +106,8 @@ export default function Refferel() {
                     </View>
                 </TouchableHighlight>
 
-                <Pressable style={{alignSelf:'center'}} onPress={()=>navigation.navigate('VehicalReg1')}>
-                    <Text>{i18n.t('ref.skip')}</Text>
+                <Pressable style={{alignSelf:'center'}} onPress={()=>{goToNext()}}>
+                    <Text style={{color:'black'}}>{i18n.t('ref.skip')}</Text>
                 </Pressable>
         </ScrollView>
     </View>

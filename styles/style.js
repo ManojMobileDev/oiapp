@@ -8,6 +8,8 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 15,
     backgroundColor: "#fff",
+    // alignItems:'center',
+    // justifyContent:'center'
   },
   splashcontainer: {
     flex: 1,
@@ -164,6 +166,7 @@ const styles = StyleSheet.create({
     paddingLeft:10,
     fontSize:17,
     width:windowWidth-100,
+    color:'black'
     // backgroundColor:'red'
     // fontFamily:'Poppins-Regular',
   },
@@ -178,7 +181,7 @@ const styles = StyleSheet.create({
     paddingTop:25
   },
   drawerLinearView: {
-    height: windowHeight-25,
+    height: windowHeight,
     flex:1
   },
   codeinput: {
@@ -216,7 +219,8 @@ const styles = StyleSheet.create({
   terms:{
     fontFamily:'Poppins-Regular',
     fontSize:13,
-    paddingLeft:5
+    paddingLeft:5,
+    color:'black'
   },
   underlineStyleBase: {
     width: 40,

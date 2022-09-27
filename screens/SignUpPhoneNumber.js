@@ -90,7 +90,7 @@ export default function SignUpPhoneNumber() {
         console.log(val);
         setOtp(val)
 
-        fetch('https://boxesfree.shop/send_sms_by_otp.php', {
+        fetch('https://bxladmin.monthekristho.com/pages/send_sms_by_otp.php', {
         // fetch('https://slwsb.lk/send_sms_by_otp.php', {
             method: 'POST',
             headers: {
@@ -236,6 +236,7 @@ export default function SignUpPhoneNumber() {
                         value={number}
                         placeholder="00 000 0000"
                         keyboardType="numeric"
+                        placeholderTextColor={'gray'}
                        
                     />
                 </Animatable.View>

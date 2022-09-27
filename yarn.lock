@@ -6135,6 +6135,11 @@ rimraf@~2.2.6:
   resolved "https://registry.yarnpkg.com/rimraf/-/rimraf-2.2.8.tgz"
   integrity sha1-5Dm+Kq7jJzIZUnMPmaiSnk/FBYI=
 
+rn-slide-button@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/rn-slide-button/-/rn-slide-button-1.0.3.tgz#2573cb4e1f9645543b5dc6bfe4d5b473aa419eea"
+  integrity sha512-quzZNfvNkJ3rTPCTiz5WOezkJoErP3bTiyofOFf4lrpNWPpL2Dt1mXPzxzUC8hYHNl6BQaYuF5VLGL5SIod5Cw==
+
 rn-swipeable-panel@^1.2.5, rn-swipeable-panel@^1.2.7:
   version "1.2.7"
   resolved "https://registry.yarnpkg.com/rn-swipeable-panel/-/rn-swipeable-panel-1.2.7.tgz#a72f65c91d51715e84cdb9e912db8d94c150b1be"
